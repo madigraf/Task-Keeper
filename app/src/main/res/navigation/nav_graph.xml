@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_today">
+
+    <fragment
+        android:id="@+id/navigation_today"
+        android:name="com.example.taskkeeper.TodayFragment"
+        android:label="@string/title_today"
+        tools:layout="@layout/fragment_today" />
+
+    <fragment
+        android:id="@+id/navigation_week"
+        android:name="com.example.taskkeeper.WeekFragment"
+        android:label="@string/title_week"
+        tools:layout="@layout/fragment_week" />
+
+    <fragment
+        android:id="@+id/navigation_maintasks"
+        android:name="com.example.taskkeeper.MaintasksFragment"
+        android:label="@string/title_maintasks"
+        tools:layout="@layout/fragment_maintasks" />
+
+    <fragment
+        android:id="@+id/navigation_archivetasks"
+        android:name="com.example.taskkeeper.ArchivetasksFragment"
+        android:label="@string/title_archivetasks"
+        tools:layout="@layout/fragment_archivetasks" />
+
+    <fragment
+        android:id="@+id/navigation_routines"
+        android:name="com.example.taskkeeper.RoutinesFragment"
+        android:label="@string/title_routines"
+        tools:layout="@layout/fragment_routines" />
+
+</navigation>

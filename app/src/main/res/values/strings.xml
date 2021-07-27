@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Task Keeper</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_today">Today</string>
+    <string name="title_week">Week</string>
+    <string name="title_maintasks">Tasks</string>
+    <string name="title_archivetasks">Archive</string>
+    <string name="title_routines">Routines</string>
 </resources>
