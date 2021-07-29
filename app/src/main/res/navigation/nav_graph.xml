@@ -3,35 +3,35 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_today">
+    app:startDestination="@+id/navigation_maintasks">
 
     <fragment
         android:id="@+id/navigation_today"
-        android:name="com.example.taskkeeper.TodayFragment"
+        android:name="com.example.taskkeeper.Fragment.TodayFragment"
         android:label="@string/title_today"
         tools:layout="@layout/fragment_today" />
 
     <fragment
         android:id="@+id/navigation_week"
-        android:name="com.example.taskkeeper.WeekFragment"
+        android:name="com.example.taskkeeper.Fragment.WeekFragment"
         android:label="@string/title_week"
         tools:layout="@layout/fragment_week" />
 
     <fragment
         android:id="@+id/navigation_maintasks"
-        android:name="com.example.taskkeeper.MaintasksFragment"
+        android:name="com.example.taskkeeper.Fragment.MaintasksFragment"
         android:label="@string/title_maintasks"
         tools:layout="@layout/fragment_maintasks" />
 
     <fragment
         android:id="@+id/navigation_archivetasks"
-        android:name="com.example.taskkeeper.ArchivetasksFragment"
+        android:name="com.example.taskkeeper.Fragment.ArchivetasksFragment"
         android:label="@string/title_archivetasks"
         tools:layout="@layout/fragment_archivetasks" />
 
     <fragment
         android:id="@+id/navigation_routines"
-        android:name="com.example.taskkeeper.RoutinesFragment"
+        android:name="com.example.taskkeeper.Fragment.RoutinesFragment"
         android:label="@string/title_routines"
         tools:layout="@layout/fragment_routines" />
 

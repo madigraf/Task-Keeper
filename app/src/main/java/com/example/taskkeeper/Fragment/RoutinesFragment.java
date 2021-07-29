@@ -1,4 +1,4 @@
-package com.example.taskkeeper;
+package com.example.taskkeeper.Fragment;
 
 import android.os.Bundle;
 
@@ -8,12 +8,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.taskkeeper.R;
+
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link MaintasksFragment#newInstance} factory method to
+ * Use the {@link RoutinesFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MaintasksFragment extends Fragment {
+public class RoutinesFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -24,7 +26,7 @@ public class MaintasksFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public MaintasksFragment() {
+    public RoutinesFragment() {
         // Required empty public constructor
     }
 
@@ -34,11 +36,11 @@ public class MaintasksFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment MaintasksFragment.
+     * @return A new instance of fragment RoutinesFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static MaintasksFragment newInstance(String param1, String param2) {
-        MaintasksFragment fragment = new MaintasksFragment();
+    public static RoutinesFragment newInstance(String param1, String param2) {
+        RoutinesFragment fragment = new RoutinesFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -59,6 +61,6 @@ public class MaintasksFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_maintasks, container, false);
+        return inflater.inflate(R.layout.fragment_routines, container, false);
     }
 }

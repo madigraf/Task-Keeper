@@ -7,4 +7,6 @@
     <string name="title_maintasks">Tasks</string>
     <string name="title_archivetasks">Archive</string>
     <string name="title_routines">Routines</string>
+    <string name="ok">OK</string>
+    <string name="cancel">CANCEL</string>
 </resources>
