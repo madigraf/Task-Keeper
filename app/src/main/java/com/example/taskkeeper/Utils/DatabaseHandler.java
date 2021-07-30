@@ -86,7 +86,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void updateTask(int id, String task){
         ContentValues cv = new ContentValues();
         cv.put(TASK, task);
-        //database.update(MAINTASKS_TABLE, cv, ID = "+?", new String[] {String.valueOf(id)});
+        database.update(MAINTASKS_TABLE, cv, ID + "= ?", new String[] {String.valueOf(id)});
     }
 
     public void deleteTask(int id){

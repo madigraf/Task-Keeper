@@ -2,7 +2,10 @@ package com.example.taskkeeper.Fragment;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentResultListener;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -15,6 +18,7 @@ import com.example.taskkeeper.Adapter.ToDoAdapter;
 import com.example.taskkeeper.Model.ToDoModel;
 import com.example.taskkeeper.NewTaskDialog;
 import com.example.taskkeeper.R;
+import com.example.taskkeeper.RecyclerItemTouchHelper;
 import com.example.taskkeeper.Utils.DatabaseHandler;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -27,7 +31,7 @@ import java.util.List;
  * Use the {@link MaintasksFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MaintasksFragment extends Fragment implements NewTaskDialog.OnInputSelected {
+public class MaintasksFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -38,11 +42,8 @@ public class MaintasksFragment extends Fragment implements NewTaskDialog.OnInput
 
     private RecyclerView maintasksRecyclerView;
     private ToDoAdapter maintasksAdapter;
-
     private DatabaseHandler database;
-
     private List<ToDoModel> maintaskList;
-
     public FloatingActionButton newTaskButton;
 
     // TODO: Rename and change types of parameters
@@ -95,37 +96,48 @@ public class MaintasksFragment extends Fragment implements NewTaskDialog.OnInput
 
         maintasksRecyclerView = view.findViewById(R.id.maintasksRecyclerView);
         maintasksRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-        maintasksAdapter = new ToDoAdapter(database);
+        maintasksAdapter = new ToDoAdapter(view.getContext(), getParentFragmentManager(), database);
         maintasksRecyclerView.setAdapter(maintasksAdapter);
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new RecyclerItemTouchHelper(maintasksAdapter));
+        itemTouchHelper.attachToRecyclerView(maintasksRecyclerView);
 
         maintaskList = database.getAllTasks();
         Collections.reverse(maintaskList);
         maintasksAdapter.setTasks(maintaskList);
 
 
+        // update list of tasks after NewTaskDialog closes
+        getParentFragmentManager().setFragmentResultListener("NewTaskDialog", MaintasksFragment.this, new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                maintaskList = database.getAllTasks();
+                Collections.reverse(maintaskList);
+                maintasksAdapter.setTasks(maintaskList);
+                maintasksAdapter.notifyDataSetChanged();
+            }
+        });
+
+        getParentFragmentManager().setFragmentResultListener("DeleteTaskDialog", MaintasksFragment.this, new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                maintaskList = database.getAllTasks();
+                Collections.reverse(maintaskList);
+                maintasksAdapter.setTasks(maintaskList);
+                maintasksAdapter.notifyDataSetChanged();
+            }
+        });
 
         newTaskButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: opening dialog");
+                NewTaskDialog dialog = new NewTaskDialog(getParentFragmentManager());
+                dialog.show(getParentFragmentManager(), "NewTaskDialog");
 
-                NewTaskDialog dialog = new NewTaskDialog();
-                dialog.setTargetFragment(MaintasksFragment.this, 1);
-                dialog.show(getFragmentManager(), "NewTaskDialog");
             }
         });
 
         return view;
-    }
-
-    @Override
-    public void sendInput(String input) {
-        Log.d(TAG, "sendInput: found incoming input: " + input);
-
-        maintaskList = database.getAllTasks();
-        Collections.reverse(maintaskList);
-        maintasksAdapter.setTasks(maintaskList);
-        maintasksAdapter.notifyDataSetChanged();
-
     }
 }
