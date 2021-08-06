@@ -1,9 +1,15 @@
 package com.example.taskkeeper.Model;
 
-public class ToDoModel {
+public class ToDoTask extends ToDoItem{
     private int id;
     private int status;
     private String task;
+    private String category;
+
+    @Override
+    public int getType() {
+        return TYPE_TASK;
+    }
 
     public int getId() {
         return id;
@@ -27,5 +33,13 @@ public class ToDoModel {
 
     public void setTask(String task) {
         this.task = task;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 }

@@ -1,9 +1,5 @@
 package com.example.taskkeeper;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-
-import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -16,6 +12,13 @@ public class RecyclerItemTouchHelper  extends ItemTouchHelper.SimpleCallback {
     public RecyclerItemTouchHelper(ToDoAdapter adapter){
         super(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
         this.adapter = adapter;
+    }
+
+    @Override
+    public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+        // this prevents the headers from being swiped
+        if (viewHolder instanceof ToDoAdapter.HeaderViewHolder) return 0;
+        return super.getSwipeDirs(recyclerView, viewHolder);
     }
 
     @Override

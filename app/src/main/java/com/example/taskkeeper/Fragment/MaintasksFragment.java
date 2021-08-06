@@ -15,7 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.taskkeeper.Adapter.ToDoAdapter;
-import com.example.taskkeeper.Model.ToDoModel;
+import com.example.taskkeeper.Model.ToDoItem;
+import com.example.taskkeeper.Model.ToDoTask;
 import com.example.taskkeeper.NewTaskDialog;
 import com.example.taskkeeper.R;
 import com.example.taskkeeper.RecyclerItemTouchHelper;
@@ -43,7 +44,7 @@ public class MaintasksFragment extends Fragment {
     private RecyclerView maintasksRecyclerView;
     private ToDoAdapter maintasksAdapter;
     private DatabaseHandler database;
-    private List<ToDoModel> maintaskList;
+    private List<ToDoItem> maintaskList;
     public FloatingActionButton newTaskButton;
 
     // TODO: Rename and change types of parameters
@@ -102,8 +103,8 @@ public class MaintasksFragment extends Fragment {
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new RecyclerItemTouchHelper(maintasksAdapter));
         itemTouchHelper.attachToRecyclerView(maintasksRecyclerView);
 
-        maintaskList = database.getAllTasks();
-        Collections.reverse(maintaskList);
+        maintaskList = database.getAllTasksWithHeaders();
+        //Collections.reverse(maintaskList);
         maintasksAdapter.setTasks(maintaskList);
 
 
@@ -111,8 +112,8 @@ public class MaintasksFragment extends Fragment {
         getParentFragmentManager().setFragmentResultListener("NewTaskDialog", MaintasksFragment.this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-                maintaskList = database.getAllTasks();
-                Collections.reverse(maintaskList);
+                maintaskList = database.getAllTasksWithHeaders();
+                //Collections.reverse(maintaskList);
                 maintasksAdapter.setTasks(maintaskList);
                 maintasksAdapter.notifyDataSetChanged();
             }
@@ -121,8 +122,8 @@ public class MaintasksFragment extends Fragment {
         getParentFragmentManager().setFragmentResultListener("DeleteTaskDialog", MaintasksFragment.this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-                maintaskList = database.getAllTasks();
-                Collections.reverse(maintaskList);
+                maintaskList = database.getAllTasksWithHeaders();
+                //Collections.reverse(maintaskList);
                 maintasksAdapter.setTasks(maintaskList);
                 maintasksAdapter.notifyDataSetChanged();
             }

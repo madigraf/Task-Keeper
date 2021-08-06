@@ -6,21 +6,27 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.example.taskkeeper.Model.ToDoModel;
+import com.example.taskkeeper.Model.ToDoHeader;
+import com.example.taskkeeper.Model.ToDoItem;
+import com.example.taskkeeper.Model.ToDoTask;
+import com.example.taskkeeper.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
 
-    private static final int VERSION = 1;
+    private static final int VERSION = 2;
     private static final String NAME = "taskKeeperDatabase";
     private static final String MAINTASKS_TABLE = "maintasks";
     private static final String ID = "id";
     private static final String TASK = "task";
     private static final String STATUS = "status";
+    private static final String CATEGORY = "category";
     private static final String CREATE_TODO_TABLE = "CREATE TABLE " + MAINTASKS_TABLE + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + TASK + " TEXT, "
-            + STATUS + " INTEGER)";
+            + STATUS + " INTEGER, " + CATEGORY + " TEXT);";
+
+    private final String null_category = "Untagged";
 
     private SQLiteDatabase database;
 
@@ -45,26 +51,53 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         database = this.getWritableDatabase();
     }
 
-    public void insertTask(ToDoModel task){
+    public void insertTask(ToDoTask task){
         ContentValues cv = new ContentValues();
         cv.put(TASK, task.getTask());
         cv.put(STATUS, 0);
+        cv.put(CATEGORY, task.getCategory());
         database.insert(MAINTASKS_TABLE, null, cv);
     }
 
-    public List<ToDoModel> getAllTasks(){
-        List<ToDoModel> taskList = new ArrayList<>();
+    public List<ToDoItem> getAllTasks(){
+        return getTasksHelper(null);
+    }
+
+    public List<ToDoItem> getAllTasksWithHeaders(){
+        List<ToDoItem> databaseList = getTasksHelper(CATEGORY);
+        if(databaseList.size() == 0){
+            return databaseList;
+        }
+
+        List<ToDoItem> taskList = new ArrayList<>();
+        String currentCategory = "";
+        taskList.add(new ToDoHeader(null_category));
+        for(int i = 0; i < databaseList.size(); i++){
+            ToDoTask task = (ToDoTask) databaseList.get(i);
+            if(task.getCategory() != null && !currentCategory.equals(task.getCategory())){
+                taskList.add(new ToDoHeader(task.getCategory()));
+                currentCategory = task.getCategory();
+            }
+            taskList.add(task);
+        }
+
+        return taskList;
+    }
+
+    private List<ToDoItem> getTasksHelper(String orderBy){
+        List<ToDoItem> taskList = new ArrayList<>();
         Cursor cur = null;
         database.beginTransaction();
         try{
-            cur = database.query(MAINTASKS_TABLE, null, null, null, null, null, null, null);
+            cur = database.query(MAINTASKS_TABLE, null, null, null, null, null, orderBy, null);
             if(cur != null){
                 if(cur.moveToFirst()){
                     do{
-                        ToDoModel task = new ToDoModel();
+                        ToDoTask task = new ToDoTask();
                         task.setId(cur.getInt(cur.getColumnIndex(ID)));
                         task.setTask(cur.getString(cur.getColumnIndex(TASK)));
                         task.setStatus(cur.getInt(cur.getColumnIndex(STATUS)));
+                        task.setCategory(cur.getString(cur.getColumnIndex(CATEGORY)));
                         taskList.add(task);
                     } while (cur.moveToNext());
                 }
@@ -77,6 +110,29 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return taskList;
     }
 
+    public List<String> getAllCategories(){
+        List<String> categoryList = new ArrayList<>();
+        Cursor cur = null;
+        database.beginTransaction();
+        try{
+            cur = database.query(true, MAINTASKS_TABLE, null, CATEGORY, null, null, null, null, null);
+            if(cur != null){
+                if(cur.moveToFirst()){
+                    do{
+                        String string = cur.getString(cur.getColumnIndex(CATEGORY));
+                        categoryList.add(string);
+
+                    } while (cur.moveToNext());
+                }
+            }
+        }
+        finally {
+            database.endTransaction();
+            cur.close();
+        }
+        return categoryList;
+    }
+
     public void updateStatus(int id, int status){
         ContentValues cv = new ContentValues();
         cv.put(STATUS, status);
@@ -86,6 +142,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void updateTask(int id, String task){
         ContentValues cv = new ContentValues();
         cv.put(TASK, task);
+        database.update(MAINTASKS_TABLE, cv, ID + "= ?", new String[] {String.valueOf(id)});
+    }
+
+    public void updateCategory(int id, String category){
+        ContentValues cv = new ContentValues();
+        cv.put(CATEGORY, category);
         database.update(MAINTASKS_TABLE, cv, ID + "= ?", new String[] {String.valueOf(id)});
     }
 

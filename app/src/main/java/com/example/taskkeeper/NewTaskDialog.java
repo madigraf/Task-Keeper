@@ -2,23 +2,25 @@ package com.example.taskkeeper;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 
-import com.example.taskkeeper.Model.ToDoModel;
+import com.example.taskkeeper.Model.ToDoTask;
 import com.example.taskkeeper.Utils.DatabaseHandler;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class NewTaskDialog extends DialogFragment {
     private static final String TAG = "NewTaskDialog";
@@ -26,7 +28,10 @@ public class NewTaskDialog extends DialogFragment {
     private FragmentManager fragmentManager;
 
     private EditText editNewTask;
+    private Spinner spinner;
     private DatabaseHandler database;
+
+    private String null_category;
 
     public NewTaskDialog (FragmentManager fragmentManager){
         this.fragmentManager = fragmentManager;
@@ -35,15 +40,33 @@ public class NewTaskDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         super.onCreateDialog(savedInstanceState);
+
+        null_category = getString(R.string.null_category);
+
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("New Task");
 
-        editNewTask = new EditText(getContext());
-        editNewTask.setHint("Enter a task");
-        builder.setView(editNewTask);
+        View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_newtasks, null);
+        builder.setView(view);
+
+        editNewTask = view.findViewById(R.id.edittext_newtask);
+        spinner = view.findViewById(R.id.spinner_newtask);
 
         database = new DatabaseHandler(getActivity());
         database.openDatabase();
+
+        List<String> options = database.getAllCategories();
+        // we want null as a category, but we need an actual string to represent it,
+        // so we replace/add it here
+        if(options.contains(null)){
+            options.set(options.indexOf(null), null_category);
+        }
+        else {
+            options.add(0, null_category);
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, options);
+        spinner.setAdapter(adapter);
+        spinner.setSelection(0);
 
         boolean isUpdate = false;
         final Bundle bundle = getArguments();
@@ -51,6 +74,9 @@ public class NewTaskDialog extends DialogFragment {
             isUpdate = true;
             String task = bundle.getString("task");
             editNewTask.setText(task);
+            String category = bundle.getString("category");
+            if(category == null){ category = null_category; }
+            spinner.setSelection(options.indexOf(category));
         }
 
         boolean finalIsUpdate = isUpdate;
@@ -62,14 +88,19 @@ public class NewTaskDialog extends DialogFragment {
                     // this means there is input
 
                     String text = editNewTask.getText().toString();
+                    String category = spinner.getSelectedItem().toString();
+                    if(category.equals(null_category)) { category = null; }
+
                     if(finalIsUpdate){
                         database.updateTask(bundle.getInt("id"), text);
+                        database.updateCategory(bundle.getInt("id"), category);
 
                     }
                     else {
-                        ToDoModel task = new ToDoModel();
+                        ToDoTask task = new ToDoTask();
                         task.setTask(text);
                         task.setStatus(0);
+                        task.setCategory(category);
                         database.insertTask(task);
                     }
                     dismiss();
