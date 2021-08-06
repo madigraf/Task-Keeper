@@ -2,7 +2,6 @@ package com.example.taskkeeper.Adapter;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,14 +9,15 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.taskkeeper.DeleteTaskDialog;
+import com.example.taskkeeper.EditTaskDialog;
 import com.example.taskkeeper.Model.ToDoHeader;
 import com.example.taskkeeper.Model.ToDoItem;
 import com.example.taskkeeper.Model.ToDoTask;
-import com.example.taskkeeper.NewTaskDialog;
 import com.example.taskkeeper.R;
 import com.example.taskkeeper.Utils.DatabaseHandler;
 
@@ -85,6 +85,20 @@ public class ToDoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     }
                 }
             });
+            taskViewHolder.task.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    editItem(position);
+                    return true;
+                }
+            });
+            taskViewHolder.taskHolder.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    editItem(position);
+                    return true;
+                }
+            });
         }
     }
 
@@ -119,9 +133,9 @@ public class ToDoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         bundle.putString("task", item.getTask());
         bundle.putString("category", item.getCategory());
 
-        NewTaskDialog dialog = new NewTaskDialog(fragmentManager);
+        EditTaskDialog dialog = new EditTaskDialog(fragmentManager);
         dialog.setArguments(bundle);
-        dialog.show(fragmentManager, "NewTaskDialog");
+        dialog.show(fragmentManager, "EditTaskDialog");
     }
 
     public static class HeaderViewHolder extends RecyclerView.ViewHolder {
@@ -135,10 +149,12 @@ public class ToDoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static class TaskViewHolder extends RecyclerView.ViewHolder {
         CheckBox task;
+        CardView taskHolder;
 
         TaskViewHolder(View view){
             super(view);
             task = view.findViewById(R.id.todoCheckbox);
+            taskHolder = view.findViewById(R.id.toDoHolder);
         }
     }
 }

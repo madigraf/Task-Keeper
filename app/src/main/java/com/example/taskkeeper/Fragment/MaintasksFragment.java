@@ -112,20 +112,21 @@ public class MaintasksFragment extends Fragment {
         getParentFragmentManager().setFragmentResultListener("NewTaskDialog", MaintasksFragment.this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-                maintaskList = database.getAllTasksWithHeaders();
-                //Collections.reverse(maintaskList);
-                maintasksAdapter.setTasks(maintaskList);
-                maintasksAdapter.notifyDataSetChanged();
+                refreshList();
             }
         });
 
         getParentFragmentManager().setFragmentResultListener("DeleteTaskDialog", MaintasksFragment.this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-                maintaskList = database.getAllTasksWithHeaders();
-                //Collections.reverse(maintaskList);
-                maintasksAdapter.setTasks(maintaskList);
-                maintasksAdapter.notifyDataSetChanged();
+                refreshList();
+            }
+        });
+
+        getParentFragmentManager().setFragmentResultListener("EditTaskDialog", MaintasksFragment.this, new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                refreshList();
             }
         });
 
@@ -140,5 +141,12 @@ public class MaintasksFragment extends Fragment {
         });
 
         return view;
+    }
+
+    private void refreshList(){
+        maintaskList = database.getAllTasksWithHeaders();
+        //Collections.reverse(maintaskList);
+        maintasksAdapter.setTasks(maintaskList);
+        maintasksAdapter.notifyDataSetChanged();
     }
 }
