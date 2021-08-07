@@ -1,4 +1,4 @@
-package com.example.taskkeeper;
+package com.example.taskkeeper.Dialog;
 
 import android.app.AlertDialog;
 import android.app.Dialog;

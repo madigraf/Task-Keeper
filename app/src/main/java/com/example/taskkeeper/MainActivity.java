@@ -2,8 +2,10 @@ package com.example.taskkeeper;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
@@ -11,6 +13,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.taskkeeper.Fragment.MaintasksFragment;
+import com.example.taskkeeper.Fragment.TaskFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
@@ -50,11 +54,19 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_categories:
-                // User chose the "Settings" item, show the app settings UI...
+                // User chose the "Manage Categories" item, show the app settings UI...
                 return true;
 
             case R.id.action_prune:
-                // User chose the "Settings" item, show the app settings UI...
+                // !!! this is not final, only here until other panes are implemented
+                NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.navHostFragment);
+                try{
+                    MaintasksFragment current = (MaintasksFragment) navHostFragment.getChildFragmentManager().getFragments().get(0);
+                    current.prune();
+                } catch (Exception e) {
+                    // in case we press prune on another pane other than Maintasks
+                }
+
                 return true;
 
             case R.id.action_settings:

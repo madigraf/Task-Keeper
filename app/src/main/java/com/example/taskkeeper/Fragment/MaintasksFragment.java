@@ -17,14 +17,13 @@ import android.view.ViewGroup;
 import com.example.taskkeeper.Adapter.ToDoAdapter;
 import com.example.taskkeeper.Model.ToDoItem;
 import com.example.taskkeeper.Model.ToDoTask;
-import com.example.taskkeeper.NewTaskDialog;
+import com.example.taskkeeper.Dialog.NewTaskDialog;
 import com.example.taskkeeper.R;
 import com.example.taskkeeper.RecyclerItemTouchHelper;
 import com.example.taskkeeper.Utils.DatabaseHandler;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -37,6 +36,7 @@ public class MaintasksFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String TAG = "MaintasksFragment";
+    private final String fragmentName = "Tasks";
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -97,13 +97,13 @@ public class MaintasksFragment extends Fragment {
 
         maintasksRecyclerView = view.findViewById(R.id.maintasksRecyclerView);
         maintasksRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-        maintasksAdapter = new ToDoAdapter(view.getContext(), getParentFragmentManager(), database);
+        maintasksAdapter = new ToDoAdapter(view.getContext(), getParentFragmentManager(), fragmentName, database);
         maintasksRecyclerView.setAdapter(maintasksAdapter);
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new RecyclerItemTouchHelper(maintasksAdapter));
         itemTouchHelper.attachToRecyclerView(maintasksRecyclerView);
 
-        maintaskList = database.getAllTasksWithHeaders();
+        maintaskList = database.getFragmentTasksWithHeaders(fragmentName);
         //Collections.reverse(maintaskList);
         maintasksAdapter.setTasks(maintaskList);
 
@@ -134,7 +134,7 @@ public class MaintasksFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: opening dialog");
-                NewTaskDialog dialog = new NewTaskDialog(getParentFragmentManager());
+                NewTaskDialog dialog = new NewTaskDialog(getParentFragmentManager(), fragmentName);
                 dialog.show(getParentFragmentManager(), "NewTaskDialog");
 
             }
@@ -143,8 +143,23 @@ public class MaintasksFragment extends Fragment {
         return view;
     }
 
+    public void prune(){
+        refreshList();
+
+        for (ToDoItem toDoItem: maintaskList) {
+            if(toDoItem.getType() == ToDoItem.TYPE_TASK){
+                ToDoTask toDoTask = (ToDoTask) toDoItem;
+                if(toDoTask.getStatus() == 1){
+                    database.deleteTask(toDoTask.getId());
+                }
+            }
+        }
+
+        refreshList();
+    }
+
     private void refreshList(){
-        maintaskList = database.getAllTasksWithHeaders();
+        maintaskList = database.getFragmentTasksWithHeaders(fragmentName);
         //Collections.reverse(maintaskList);
         maintasksAdapter.setTasks(maintaskList);
         maintasksAdapter.notifyDataSetChanged();

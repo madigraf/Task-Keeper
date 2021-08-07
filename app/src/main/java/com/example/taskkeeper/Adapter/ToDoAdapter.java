@@ -13,8 +13,8 @@ import androidx.cardview.widget.CardView;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.taskkeeper.DeleteTaskDialog;
-import com.example.taskkeeper.EditTaskDialog;
+import com.example.taskkeeper.Dialog.DeleteTaskDialog;
+import com.example.taskkeeper.Dialog.EditTaskDialog;
 import com.example.taskkeeper.Model.ToDoHeader;
 import com.example.taskkeeper.Model.ToDoItem;
 import com.example.taskkeeper.Model.ToDoTask;
@@ -28,12 +28,14 @@ public class ToDoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<ToDoItem> todoList;
     private Context context;
     private FragmentManager fragmentManager;
+    private String fragmentName;
 
     private DatabaseHandler database;
 
-    public ToDoAdapter(Context context, FragmentManager fragmentManager, DatabaseHandler database){
+    public ToDoAdapter(Context context, FragmentManager fragmentManager, String fragmentName, DatabaseHandler database){
         this.context = context;
         this.fragmentManager = fragmentManager;
+        this.fragmentName = fragmentName;
         this.database = database;
     }
 
@@ -133,7 +135,7 @@ public class ToDoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         bundle.putString("task", item.getTask());
         bundle.putString("category", item.getCategory());
 
-        EditTaskDialog dialog = new EditTaskDialog(fragmentManager);
+        EditTaskDialog dialog = new EditTaskDialog(fragmentManager, fragmentName);
         dialog.setArguments(bundle);
         dialog.show(fragmentManager, "EditTaskDialog");
     }

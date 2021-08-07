@@ -23,8 +23,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String TASK = "task";
     private static final String STATUS = "status";
     private static final String CATEGORY = "category";
+    private static final String FRAGMENT = "fragment";
     private static final String CREATE_TODO_TABLE = "CREATE TABLE " + MAINTASKS_TABLE + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + TASK + " TEXT, "
-            + STATUS + " INTEGER, " + CATEGORY + " TEXT);";
+            + STATUS + " INTEGER, " + CATEGORY + " TEXT, " + FRAGMENT + " TEXT);";
 
     private final String null_category = "Untagged";
 
@@ -51,20 +52,21 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         database = this.getWritableDatabase();
     }
 
-    public void insertTask(ToDoTask task){
+    public void insertTask(ToDoTask task, String fragmentName){
         ContentValues cv = new ContentValues();
         cv.put(TASK, task.getTask());
         cv.put(STATUS, 0);
         cv.put(CATEGORY, task.getCategory());
+        cv.put(FRAGMENT, fragmentName);
         database.insert(MAINTASKS_TABLE, null, cv);
     }
 
-    public List<ToDoItem> getAllTasks(){
-        return getTasksHelper(null);
+    public List<ToDoItem> getFragmentTasks(String fragmentName){
+        return getFragmentTasksHelper(null, fragmentName);
     }
 
-    public List<ToDoItem> getAllTasksWithHeaders(){
-        List<ToDoItem> databaseList = getTasksHelper(CATEGORY);
+    public List<ToDoItem> getFragmentTasksWithHeaders(String fragmentName){
+        List<ToDoItem> databaseList = getFragmentTasksHelper(CATEGORY, fragmentName);
         if(databaseList.size() == 0){
             return databaseList;
         }
@@ -84,12 +86,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return taskList;
     }
 
-    private List<ToDoItem> getTasksHelper(String orderBy){
+    private List<ToDoItem> getFragmentTasksHelper(String orderBy, String fragmentName){
         List<ToDoItem> taskList = new ArrayList<>();
         Cursor cur = null;
         database.beginTransaction();
         try{
-            cur = database.query(MAINTASKS_TABLE, null, null, null, null, null, orderBy, null);
+            cur = database.query(MAINTASKS_TABLE, null, FRAGMENT + " =?", new String[]{fragmentName}, null, null, orderBy, null);
             if(cur != null){
                 if(cur.moveToFirst()){
                     do{
