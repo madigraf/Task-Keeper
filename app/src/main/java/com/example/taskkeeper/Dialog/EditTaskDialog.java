@@ -1,6 +1,5 @@
 package com.example.taskkeeper.Dialog;
 
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -62,15 +61,11 @@ public class EditTaskDialog extends DialogFragment {
         database = new DatabaseHandler(getActivity());
         database.openDatabase();
 
-        List<String> options = database.getAllCategories();
+        List<String> options = database.getAllCategoryNames();
         // we want null as a category, but we need an actual string to represent it,
-        // so we replace/add it here
-        if(options.contains(null)){
-            options.set(options.indexOf(null), null_category);
-        }
-        else {
-            options.add(0, null_category);
-        }
+        // so we add it here
+        options.add(0, null_category);
+
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, options);
         spinner.setAdapter(adapter);
         spinner.setSelection(0);
@@ -107,7 +102,7 @@ public class EditTaskDialog extends DialogFragment {
 
                     if(finalIsUpdate){
                         database.updateTask(bundle.getInt("id"), text);
-                        database.updateCategory(bundle.getInt("id"), category);
+                        database.updateTaskCategory(bundle.getInt("id"), category);
 
                     }
                     else {

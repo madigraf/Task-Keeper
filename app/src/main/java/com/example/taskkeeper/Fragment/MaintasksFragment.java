@@ -158,7 +158,7 @@ public class MaintasksFragment extends Fragment {
         refreshList();
     }
 
-    private void refreshList(){
+    public void refreshList(){
         maintaskList = database.getFragmentTasksWithHeaders(fragmentName);
         //Collections.reverse(maintaskList);
         maintasksAdapter.setTasks(maintaskList);

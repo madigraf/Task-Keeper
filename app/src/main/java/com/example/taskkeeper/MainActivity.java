@@ -1,8 +1,10 @@
 package com.example.taskkeeper;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentResultListener;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
@@ -13,6 +15,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.taskkeeper.Dialog.ManageCategoriesDialog;
 import com.example.taskkeeper.Fragment.MaintasksFragment;
 import com.example.taskkeeper.Fragment.TaskFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -41,6 +44,21 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.navHostFragment);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
+
+        // Set up listener for when ManageCategoriesDialog closes, and the activity needs to refresh the data in fragments
+        // !!! temp solution while only one fragment is intialized
+        getSupportFragmentManager().setFragmentResultListener(ManageCategoriesDialog.TAG, this, new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(String requestKey, Bundle result) {
+                NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.navHostFragment);
+                try{
+                    MaintasksFragment current = (MaintasksFragment) navHostFragment.getChildFragmentManager().getFragments().get(0);
+                    current.refreshList();
+                } catch (Exception e) {
+                    // in case we press prune on another pane other than Maintasks
+                }
+            }
+        });
     }
 
     @Override
@@ -55,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_categories:
                 // User chose the "Manage Categories" item, show the app settings UI...
+                new ManageCategoriesDialog().show(getSupportFragmentManager(), ManageCategoriesDialog.TAG);
                 return true;
 
             case R.id.action_prune:
