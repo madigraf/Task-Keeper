@@ -18,6 +18,7 @@ import com.example.taskkeeper.Model.ToDoTask;
 import com.example.taskkeeper.R;
 import com.example.taskkeeper.Utils.DatabaseHandler;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class EditTaskDialog extends DialogFragment {
@@ -26,7 +27,8 @@ public class EditTaskDialog extends DialogFragment {
     private FragmentManager fragmentManager;
     private String fragmentName;
 
-    private Spinner spinner;
+    private Spinner categorySpinner;
+    private Spinner fragmentSpinner;
     private EditText editTask;
     private Button cancelButton;
     private Button saveButton;
@@ -53,7 +55,8 @@ public class EditTaskDialog extends DialogFragment {
         View view = inflater.inflate(R.layout.dialog_edittasks, container, false);
         null_category = getString(R.string.null_category);
         editTask = view.findViewById(R.id.taskname_edittasks);
-        spinner = view.findViewById(R.id.category_edittasks);
+        categorySpinner = view.findViewById(R.id.category_edittasks);
+        fragmentSpinner = view.findViewById(R.id.fragment_edittasks);
         cancelButton = view.findViewById(R.id.cancel_edittasks);
         saveButton = view.findViewById(R.id.save_edittasks);
         deleteButton = view.findViewById(R.id.delete_edittasks);
@@ -66,9 +69,20 @@ public class EditTaskDialog extends DialogFragment {
         // so we add it here
         options.add(0, null_category);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, options);
-        spinner.setAdapter(adapter);
-        spinner.setSelection(0);
+        ArrayAdapter<String> categoryAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, options);
+        categorySpinner.setAdapter(categoryAdapter);
+        categorySpinner.setSelection(0);
+
+        List<String> fragments = new ArrayList<>();
+        fragments.add("Today");
+        fragments.add("Week");
+        fragments.add("Tasks");
+        fragments.add("Archive");
+        ArrayAdapter<String> fragmentAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, fragments);
+        fragmentSpinner.setAdapter(fragmentAdapter);
+        fragmentSpinner.setSelection(fragments.indexOf(fragmentName));
+
+
 
         boolean isUpdate = false;
         final Bundle bundle = getArguments();
@@ -78,7 +92,7 @@ public class EditTaskDialog extends DialogFragment {
             editTask.setText(task);
             String category = bundle.getString("category");
             if(category == null){ category = null_category; }
-            spinner.setSelection(options.indexOf(category));
+            categorySpinner.setSelection(options.indexOf(category));
         }
 
         cancelButton.setOnClickListener(new View.OnClickListener(){
@@ -97,12 +111,14 @@ public class EditTaskDialog extends DialogFragment {
                     // this means there is input
 
                     String text = editTask.getText().toString();
-                    String category = spinner.getSelectedItem().toString();
+                    String category = categorySpinner.getSelectedItem().toString();
+                    String fragment = fragmentSpinner.getSelectedItem().toString();
                     if(category.equals(null_category)) { category = null; }
 
                     if(finalIsUpdate){
                         database.updateTask(bundle.getInt("id"), text);
                         database.updateTaskCategory(bundle.getInt("id"), category);
+                        database.updateFragment(bundle.getInt("id"), fragment);
 
                     }
                     else {

@@ -180,6 +180,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         database.update(MAINTASKS_TABLE, cv, ID + "= ?", new String[] {String.valueOf(id)});
     }
 
+    public void updateFragment(int id, String fragment){
+        ContentValues cv = new ContentValues();
+        cv.put(FRAGMENT, fragment);
+        database.update(MAINTASKS_TABLE, cv, ID + "= ?", new String[] {String.valueOf(id)});
+    }
+
     public void deleteTask(int id){
         database.delete(MAINTASKS_TABLE, ID + "=?", new String[] {String.valueOf(id)});
     }
