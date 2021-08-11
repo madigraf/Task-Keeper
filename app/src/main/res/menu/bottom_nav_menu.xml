@@ -14,12 +14,12 @@
         android:icon="@drawable/ic_outline_assignment_24"
         android:title="@string/title_maintasks" />
     <item
-        android:id="@+id/navigation_routines"
-        android:icon="@drawable/ic_outline_update_24"
-        android:title="@string/title_routines" />
-    <item
         android:id="@+id/navigation_archivetasks"
         android:icon="@drawable/ic_outline_archive_24"
         android:title="@string/title_archivetasks" />
+    <item
+        android:id="@+id/navigation_routines"
+        android:icon="@drawable/ic_outline_update_24"
+        android:title="@string/title_routines" />
 
 </menu>

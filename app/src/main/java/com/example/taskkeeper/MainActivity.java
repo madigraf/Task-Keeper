@@ -12,15 +12,19 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.taskkeeper.Dialog.ManageCategoriesDialog;
+import com.example.taskkeeper.Fragment.ArchivetasksFragment;
 import com.example.taskkeeper.Fragment.MaintasksFragment;
 import com.example.taskkeeper.Fragment.TaskFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         // Pass the ID's of Different destinations
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_today, R.id.navigation_week, R.id.navigation_maintasks,
-                R.id.navigation_archivetasks, R.id.navigation_routines )
+                R.id.navigation_archivetasks, R.id.navigation_routines)
                 .build();
 
         // Initialize NavController
@@ -46,16 +50,15 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navView, navController);
 
         // Set up listener for when ManageCategoriesDialog closes, and the activity needs to refresh the data in fragments
-        // !!! temp solution while only one fragment is intialized
         getSupportFragmentManager().setFragmentResultListener(ManageCategoriesDialog.TAG, this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(String requestKey, Bundle result) {
                 NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.navHostFragment);
                 try{
-                    MaintasksFragment current = (MaintasksFragment) navHostFragment.getChildFragmentManager().getFragments().get(0);
+                    TaskFragment current = (TaskFragment) navHostFragment.getChildFragmentManager().getFragments().get(0);
                     current.refreshList();
                 } catch (Exception e) {
-                    // in case we press prune on another pane other than Maintasks
+                    Log.e(TAG, "onFragmentResult for MainActivity: ", e);
                 }
             }
         });
@@ -77,13 +80,12 @@ public class MainActivity extends AppCompatActivity {
                 return true;
 
             case R.id.action_prune:
-                // !!! this is not final, only here until other panes are implemented
                 NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.navHostFragment);
                 try{
-                    MaintasksFragment current = (MaintasksFragment) navHostFragment.getChildFragmentManager().getFragments().get(0);
+                    TaskFragment current = (TaskFragment) navHostFragment.getChildFragmentManager().getFragments().get(0);
                     current.prune();
                 } catch (Exception e) {
-                    // in case we press prune on another pane other than Maintasks
+                    Log.e(TAG, "onOptionsItemSelected: ", e);
                 }
 
                 return true;
