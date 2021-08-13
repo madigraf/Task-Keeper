@@ -140,6 +140,62 @@ public class ToDoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         dialog.show(fragmentManager, "EditTaskDialog");
     }
 
+    public void moveLeft(int position){
+        String destination = null;
+
+        ToDoTask item = (ToDoTask) todoList.get(position);
+
+        switch (fragmentName) {
+            case "Today":
+                destination = null;
+                break;
+            case "Week" :
+                destination = "Today";
+                break;
+            case "Tasks" :
+                destination = "Week";
+                break;
+            case "Archive" :
+                destination = "Tasks";
+                break;
+        }
+        if(destination == null){
+            notifyDataSetChanged();
+            return;
+        }
+        database.updateFragment(item.getId(), destination);
+        setTasks(database.getFragmentTasksWithHeaders(fragmentName));
+        notifyDataSetChanged();
+    }
+
+    public void moveRight(int position){
+        String destination = null;
+
+        ToDoTask item = (ToDoTask) todoList.get(position);
+
+        switch (fragmentName) {
+            case "Today":
+                destination = "Week";
+                break;
+            case "Week" :
+                destination = "Tasks";
+                break;
+            case "Tasks" :
+                destination = "Archive";
+                break;
+            case "Archive" :
+                destination = null;
+                break;
+        }
+        if(destination == null){
+            notifyDataSetChanged();
+            return;
+        }
+        database.updateFragment(item.getId(), destination);
+        setTasks(database.getFragmentTasksWithHeaders(fragmentName));
+        notifyDataSetChanged();
+    }
+
     public static class HeaderViewHolder extends RecyclerView.ViewHolder {
         TextView header;
 

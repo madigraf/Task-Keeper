@@ -30,10 +30,10 @@ public class RecyclerItemTouchHelper  extends ItemTouchHelper.SimpleCallback {
     public void onSwiped(final RecyclerView.ViewHolder viewHolder, int direction){
         final int position = viewHolder.getBindingAdapterPosition();
         if(direction == ItemTouchHelper.RIGHT){
-            adapter.deleteItem(position);
+            adapter.moveRight(position);
         }
         else{
-            adapter.editItem(position);
+            adapter.moveLeft(position);
         }
     }
 
