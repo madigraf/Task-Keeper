@@ -90,9 +90,9 @@ public class MainActivity extends AppCompatActivity {
 
                 return true;
 
-            case R.id.action_settings:
+            /*case R.id.action_settings:
                 // User chose the "Settings" item, show the app settings UI...
-                return true;
+                return true;*/
 
             default:
                 // If we got here, the user's action was not recognized.
