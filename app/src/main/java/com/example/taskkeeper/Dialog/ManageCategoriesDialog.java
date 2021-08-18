@@ -53,6 +53,7 @@ public class ManageCategoriesDialog extends DialogFragment {
         null_category = "Untagged";
         newCategoryButton = view.findViewById(R.id.add_button_categories);
         doneButton = view.findViewById(R.id.done_button_categories);
+        beforeModificationsList = new ArrayList<>();
         categoryList = new ArrayList<>();
 
         database = new DatabaseHandler(getActivity());
@@ -63,6 +64,8 @@ public class ManageCategoriesDialog extends DialogFragment {
         categoriesAdapter = new CategoryAdapter(database);
         categoriesRecyclerView.setAdapter(categoriesAdapter);
 
+
+        removeIllegalCategories();
         beforeModificationsList = database.getALlCategories();
         categoryList = database.getALlCategories();
         categoriesAdapter.setCategories(categoryList);
@@ -79,8 +82,7 @@ public class ManageCategoriesDialog extends DialogFragment {
         doneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                removeIllegalCategories();
-                updateTaskCategories();
+
                 dismiss();
             }
         });
@@ -155,6 +157,8 @@ public class ManageCategoriesDialog extends DialogFragment {
     @Override
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
+        removeIllegalCategories();
+        updateTaskCategories();
         getParentFragmentManager().setFragmentResult(TAG, new Bundle());
     }
 }
