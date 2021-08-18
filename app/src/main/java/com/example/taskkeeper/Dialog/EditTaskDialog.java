@@ -46,7 +46,7 @@ public class EditTaskDialog extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setStyle(DialogFragment.STYLE_NORMAL, R.style.EditTask);
+        setStyle(DialogFragment.STYLE_NORMAL, R.style.Theme_TaskKeeper);
     }
 
     @Override

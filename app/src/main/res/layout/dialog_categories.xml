@@ -5,44 +5,56 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/title_categories"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_categories"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Categories"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/Theme.TaskKeeper"
+        app:title="Categories"
+        app:popupTheme="@style/Theme.TaskKeeper"
+        app:titleTextColor="@color/white"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/categoriesRecyclerView"
-        android:layout_width="300dp"
-        android:layout_height="500dp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:layout_marginTop="12dp"
         android:nestedScrollingEnabled="true"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toTopOf="@+id/done_button_categories"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title_categories" />
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_categories" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_categories"
-        android:layout_width="wrap_content"
+    <Button
+        android:id="@+id/add_button_categories"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:src="@drawable/ic_outline_add_24"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        android:text="add"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/categoriesRecyclerView" />
+        app:layout_constraintEnd_toStartOf="@id/guideline_categories"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_categories"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
 
     <Button
         android:id="@+id/done_button_categories"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="done"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/fab_categories"
-        app:layout_constraintVertical_bias="0.807"
-        tools:layout_editor_absoluteX="0dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/guideline_categories" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

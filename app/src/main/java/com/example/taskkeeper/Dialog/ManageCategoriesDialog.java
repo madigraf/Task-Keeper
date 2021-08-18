@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,7 +30,7 @@ public class ManageCategoriesDialog extends DialogFragment {
     private DatabaseHandler database;
     private List<Category> categoryList;
     private List<Category> beforeModificationsList;
-    private FloatingActionButton newCategoryButton;
+    private Button newCategoryButton;
     private Button doneButton;
 
     public static final String TAG = "ManageCategoriesDialog";
@@ -37,14 +38,20 @@ public class ManageCategoriesDialog extends DialogFragment {
     private String null_category;
 
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
+        setStyle(DialogFragment.STYLE_NORMAL, R.style.Theme_TaskKeeper);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.dialog_categories, container, false);
+
         null_category = "Untagged";
-        newCategoryButton = view.findViewById(R.id.fab_categories);
+        newCategoryButton = view.findViewById(R.id.add_button_categories);
         doneButton = view.findViewById(R.id.done_button_categories);
         categoryList = new ArrayList<>();
 
