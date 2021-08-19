@@ -21,6 +21,6 @@
         android:layout_gravity="bottom|right"
         android:layout_margin="16dp"
         android:src="@drawable/ic_outline_add_24"
-        app:backgroundTint="?attr/colorSecondary" />
+        app:backgroundTint="?attr/colorSecondary"/>
 
 </FrameLayout>

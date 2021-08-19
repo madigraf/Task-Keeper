@@ -5,7 +5,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -27,8 +29,12 @@ public class EditTaskDialog extends DialogFragment {
     private FragmentManager fragmentManager;
     private String fragmentName;
 
-    private Spinner categorySpinner;
-    private Spinner fragmentSpinner;
+    private AutoCompleteTextView categoryPicker;
+    private String picked_category;
+
+    private AutoCompleteTextView fragmentPicker;
+    private String picked_fragment;
+
     private EditText editTask;
     private Button cancelButton;
     private Button saveButton;
@@ -55,8 +61,8 @@ public class EditTaskDialog extends DialogFragment {
         View view = inflater.inflate(R.layout.dialog_edittasks, container, false);
         null_category = getString(R.string.null_category);
         editTask = view.findViewById(R.id.taskname_edittasks);
-        categorySpinner = view.findViewById(R.id.category_edittasks);
-        fragmentSpinner = view.findViewById(R.id.fragment_edittasks);
+        categoryPicker = view.findViewById(R.id.category_edittasks);
+        fragmentPicker = view.findViewById(R.id.tab_edittasks);
         cancelButton = view.findViewById(R.id.cancel_edittasks);
         saveButton = view.findViewById(R.id.save_edittasks);
         deleteButton = view.findViewById(R.id.delete_edittasks);
@@ -69,31 +75,40 @@ public class EditTaskDialog extends DialogFragment {
         // so we add it here
         options.add(0, null_category);
 
-        ArrayAdapter<String> categoryAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, options);
-        categorySpinner.setAdapter(categoryAdapter);
-        categorySpinner.setSelection(0);
+        ArrayAdapter<String> categoryAdapter = new ArrayAdapter<String>(getContext(), R.layout.list_item, options);
+        categoryPicker.setAdapter(categoryAdapter);
+        categoryPicker.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                picked_category = (String) parent.getItemAtPosition(position);
+
+            }
+        });
 
         List<String> fragments = new ArrayList<>();
         fragments.add("Today");
         fragments.add("Week");
         fragments.add("Tasks");
         fragments.add("Archive");
-        ArrayAdapter<String> fragmentAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, fragments);
-        fragmentSpinner.setAdapter(fragmentAdapter);
-        fragmentSpinner.setSelection(fragments.indexOf(fragmentName));
+        ArrayAdapter<String> fragmentAdapter = new ArrayAdapter<String>(getContext(), R.layout.list_item, fragments);
+        fragmentPicker.setAdapter(fragmentAdapter);
+        fragmentPicker.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                picked_fragment = (String) parent.getItemAtPosition(position);
 
+            }
+        });
 
-
-        boolean isUpdate = false;
         final Bundle bundle = getArguments();
-        if(bundle != null){
-            isUpdate = true;
-            String task = bundle.getString("task");
-            editTask.setText(task);
-            String category = bundle.getString("category");
-            if(category == null){ category = null_category; }
-            categorySpinner.setSelection(options.indexOf(category));
-        }
+        String task = bundle.getString("task");
+        editTask.setText(task);
+        picked_category = bundle.getString("category");
+        if(picked_category == null){ picked_category = null_category; }
+        categoryPicker.setText(picked_category, false);
+        picked_fragment = fragmentName;
+        fragmentPicker.setText(picked_fragment, false);
+
 
         cancelButton.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -102,7 +117,6 @@ public class EditTaskDialog extends DialogFragment {
             }
         });
 
-        boolean finalIsUpdate = isUpdate;
         saveButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -111,23 +125,12 @@ public class EditTaskDialog extends DialogFragment {
                     // this means there is input
 
                     String text = editTask.getText().toString();
-                    String category = categorySpinner.getSelectedItem().toString();
-                    String fragment = fragmentSpinner.getSelectedItem().toString();
-                    if(category.equals(null_category)) { category = null; }
+                    if(picked_category.equals(null_category)) { picked_category = null; }
 
-                    if(finalIsUpdate){
-                        database.updateTask(bundle.getInt("id"), text);
-                        database.updateTaskCategory(bundle.getInt("id"), category);
-                        database.updateFragment(bundle.getInt("id"), fragment);
+                    database.updateTask(bundle.getInt("id"), text);
+                    database.updateTaskCategory(bundle.getInt("id"), picked_category);
+                    database.updateFragment(bundle.getInt("id"), picked_fragment);
 
-                    }
-                    else {
-                        ToDoTask task = new ToDoTask();
-                        task.setTask(text);
-                        task.setStatus(0);
-                        task.setCategory(category);
-                        database.insertTask(task, fragmentName);
-                    }
                     dismiss();
                 }
             }

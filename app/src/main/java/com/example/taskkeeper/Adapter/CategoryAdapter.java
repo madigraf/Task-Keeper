@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.taskkeeper.Model.Category;
 import com.example.taskkeeper.R;
 import com.example.taskkeeper.Utils.DatabaseHandler;
+import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.List;
 
@@ -77,6 +78,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     public static class CategoryViewHolder extends RecyclerView.ViewHolder{
         ImageButton deleteCategoryButton;
         EditText editText;
+        //TextInputEditText editText;
         DatabaseHandler database;
 
         CategoryViewHolder(View view){

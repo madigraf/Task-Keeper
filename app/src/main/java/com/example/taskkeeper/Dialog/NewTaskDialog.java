@@ -5,7 +5,9 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.Spinner;
 
@@ -26,7 +28,10 @@ public class NewTaskDialog extends DialogFragment {
     private String fragmentName;
 
     private EditText editNewTask;
-    private Spinner spinner;
+
+    private AutoCompleteTextView categoryPicker;
+    private String pickedCategory;
+
     private DatabaseHandler database;
 
     private String null_category;
@@ -49,7 +54,7 @@ public class NewTaskDialog extends DialogFragment {
         builder.setView(view);
 
         editNewTask = view.findViewById(R.id.edittext_newtask);
-        spinner = view.findViewById(R.id.spinner_newtask);
+        categoryPicker = view.findViewById(R.id.autocomplete_newtask);
 
         database = new DatabaseHandler(getActivity());
         database.openDatabase();
@@ -58,22 +63,19 @@ public class NewTaskDialog extends DialogFragment {
         // we want null as a category, but we need an actual string to represent it,
         // so we add it here
         options.add(0, null_category);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, options);
-        spinner.setAdapter(adapter);
-        spinner.setSelection(0);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.list_item, options);
+        categoryPicker.setAdapter(adapter);
+        pickedCategory = null_category;
+        categoryPicker.setText(pickedCategory, false);
+        categoryPicker.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                pickedCategory = (String) parent.getItemAtPosition(position);
 
-        boolean isUpdate = false;
-        final Bundle bundle = getArguments();
-        if(bundle != null){
-            isUpdate = true;
-            String task = bundle.getString("task");
-            editNewTask.setText(task);
-            String category = bundle.getString("category");
-            if(category == null){ category = null_category; }
-            spinner.setSelection(options.indexOf(category));
-        }
+            }
+        });
 
-        boolean finalIsUpdate = isUpdate;
+
         builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -82,21 +84,14 @@ public class NewTaskDialog extends DialogFragment {
                     // this means there is input
 
                     String text = editNewTask.getText().toString();
-                    String category = spinner.getSelectedItem().toString();
-                    if(category.equals(null_category)) { category = null; }
+                    if(pickedCategory.equals(null_category)) { pickedCategory = null; }
 
-                    if(finalIsUpdate){
-                        database.updateTask(bundle.getInt("id"), text);
-                        database.updateTaskCategory(bundle.getInt("id"), category);
+                    ToDoTask task = new ToDoTask();
+                    task.setTask(text);
+                    task.setStatus(0);
+                    task.setCategory(pickedCategory);
+                    database.insertTask(task, fragmentName);
 
-                    }
-                    else {
-                        ToDoTask task = new ToDoTask();
-                        task.setTask(text);
-                        task.setStatus(0);
-                        task.setCategory(category);
-                        database.insertTask(task, fragmentName);
-                    }
                     dismiss();
                 }
             }
