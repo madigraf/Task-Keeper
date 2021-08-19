@@ -143,6 +143,7 @@ public class EditTaskDialog extends DialogFragment {
 
     @Override
     public void onDismiss(@NonNull DialogInterface dialog){
+        super.onDismiss(dialog);
         fragmentManager.setFragmentResult(TAG, new Bundle());
     }
 }
