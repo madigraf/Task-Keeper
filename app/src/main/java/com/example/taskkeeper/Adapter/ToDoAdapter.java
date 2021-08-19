@@ -13,7 +13,6 @@ import androidx.cardview.widget.CardView;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.taskkeeper.Dialog.DeleteTaskDialog;
 import com.example.taskkeeper.Dialog.EditTaskDialog;
 import com.example.taskkeeper.Model.ToDoHeader;
 import com.example.taskkeeper.Model.ToDoItem;
@@ -27,8 +26,8 @@ public class ToDoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<ToDoItem> todoList;
     private Context context;
-    private FragmentManager fragmentManager;
-    private String fragmentName;
+    private final FragmentManager fragmentManager;
+    private final String fragmentName;
 
     private DatabaseHandler database;
 
@@ -117,17 +116,6 @@ public class ToDoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         notifyDataSetChanged();
     }
 
-    public void deleteItem(int position){
-        ToDoTask item = (ToDoTask) todoList.get(position);
-        Bundle bundle = new Bundle();
-        bundle.putInt("id", item.getId());
-
-        DeleteTaskDialog dialog = new DeleteTaskDialog(fragmentManager);
-        dialog.setArguments(bundle);
-        dialog.show(fragmentManager, "DeleteTaskDialog");
-
-    }
-
     public void editItem(int position){
         ToDoTask item = (ToDoTask) todoList.get(position);
         Bundle bundle = new Bundle();
@@ -137,7 +125,7 @@ public class ToDoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         EditTaskDialog dialog = new EditTaskDialog(fragmentManager, fragmentName);
         dialog.setArguments(bundle);
-        dialog.show(fragmentManager, "EditTaskDialog");
+        dialog.show(fragmentManager, EditTaskDialog.TAG);
     }
 
     public void moveLeft(int position){

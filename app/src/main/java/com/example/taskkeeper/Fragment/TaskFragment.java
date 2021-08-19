@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.taskkeeper.Adapter.ToDoAdapter;
+import com.example.taskkeeper.Dialog.EditTaskDialog;
 import com.example.taskkeeper.Dialog.NewTaskDialog;
 import com.example.taskkeeper.Model.ToDoItem;
 import com.example.taskkeeper.Model.ToDoTask;
@@ -31,8 +32,6 @@ public abstract class TaskFragment extends Fragment {
     private DatabaseHandler database;
     private List<ToDoItem> taskList;
 
-    private FloatingActionButton newTaskButton;
-
     private final String fragmentName;
 
     protected TaskFragment(String fragmentName) {
@@ -47,7 +46,7 @@ public abstract class TaskFragment extends Fragment {
         database = new DatabaseHandler(view.getContext());
         database.openDatabase();
 
-        newTaskButton = view.findViewById(R.id.maintasksFAB);
+        FloatingActionButton newTaskButton = view.findViewById(R.id.maintasksFAB);
 
         taskList = new ArrayList<>();
 
@@ -60,26 +59,18 @@ public abstract class TaskFragment extends Fragment {
         itemTouchHelper.attachToRecyclerView(recyclerView);
 
         taskList = database.getFragmentTasksWithHeaders(fragmentName);
-        //Collections.reverse(maintaskList);
         adapter.setTasks(taskList);
 
 
         // update list of tasks after NewTaskDialog closes
-        getParentFragmentManager().setFragmentResultListener("NewTaskDialog", TaskFragment.this, new FragmentResultListener() {
+        getParentFragmentManager().setFragmentResultListener(NewTaskDialog.TAG, TaskFragment.this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
                 refreshList();
             }
         });
 
-        getParentFragmentManager().setFragmentResultListener("DeleteTaskDialog", TaskFragment.this, new FragmentResultListener() {
-            @Override
-            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-                refreshList();
-            }
-        });
-
-        getParentFragmentManager().setFragmentResultListener("EditTaskDialog", TaskFragment.this, new FragmentResultListener() {
+        getParentFragmentManager().setFragmentResultListener(EditTaskDialog.TAG, TaskFragment.this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
                 refreshList();
@@ -90,7 +81,7 @@ public abstract class TaskFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 NewTaskDialog dialog = new NewTaskDialog(getParentFragmentManager(), fragmentName);
-                dialog.show(getParentFragmentManager(), "NewTaskDialog");
+                dialog.show(getParentFragmentManager(), NewTaskDialog.TAG);
 
             }
         });
@@ -116,7 +107,6 @@ public abstract class TaskFragment extends Fragment {
 
     public void refreshList(){
         taskList = database.getFragmentTasksWithHeaders(fragmentName);
-        //Collections.reverse(maintaskList);
         adapter.setTasks(taskList);
         adapter.notifyDataSetChanged();
     }

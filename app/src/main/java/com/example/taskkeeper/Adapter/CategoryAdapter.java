@@ -78,7 +78,6 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     public static class CategoryViewHolder extends RecyclerView.ViewHolder{
         ImageButton deleteCategoryButton;
         EditText editText;
-        //TextInputEditText editText;
         DatabaseHandler database;
 
         CategoryViewHolder(View view){

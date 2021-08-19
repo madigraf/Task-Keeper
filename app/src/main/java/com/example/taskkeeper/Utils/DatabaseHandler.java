@@ -10,7 +10,6 @@ import com.example.taskkeeper.Model.Category;
 import com.example.taskkeeper.Model.ToDoHeader;
 import com.example.taskkeeper.Model.ToDoItem;
 import com.example.taskkeeper.Model.ToDoTask;
-import com.example.taskkeeper.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,8 +29,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             + STATUS + " INTEGER, " + CATEGORY + " TEXT, " + FRAGMENT + " TEXT);";
 
     private static final String CREATE_CATEGORY_TABLE = "CREATE TABLE " + CATEGORY_TABLE + "("  + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + CATEGORY + " TEXT);";
-
-    private final String null_category = "Untagged";
 
     private SQLiteDatabase database;
 
@@ -83,9 +80,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         String currentCategory = "";
         for(int i = 0; i < databaseList.size(); i++){
             ToDoTask task = (ToDoTask) databaseList.get(i);
-            if(!currentCategory.equals(null_category) && task.getCategory() == null){
-                taskList.add(new ToDoHeader(null_category));
-                currentCategory = null_category;
+            if(!currentCategory.equals(NullCategory.nullCategory) && task.getCategory() == null){
+                taskList.add(new ToDoHeader(NullCategory.nullCategory));
+                currentCategory = NullCategory.nullCategory;
             } else if(task.getCategory() != null && !currentCategory.equals(task.getCategory())){
                 taskList.add(new ToDoHeader(task.getCategory()));
                 currentCategory = task.getCategory();
@@ -101,7 +98,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         }
 
-        if(currentCategory.equals(null_category)){
+        if(currentCategory.equals(NullCategory.nullCategory)){
 
         }
 

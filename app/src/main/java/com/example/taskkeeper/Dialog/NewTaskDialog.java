@@ -9,7 +9,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
-import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
@@ -18,14 +17,15 @@ import androidx.fragment.app.FragmentManager;
 import com.example.taskkeeper.Model.ToDoTask;
 import com.example.taskkeeper.R;
 import com.example.taskkeeper.Utils.DatabaseHandler;
+import com.example.taskkeeper.Utils.NullCategory;
 
 import java.util.List;
 
 public class NewTaskDialog extends DialogFragment {
-    private static final String TAG = "NewTaskDialog";
+    public static final String TAG = "NewTaskDialog";
 
-    private FragmentManager fragmentManager;
-    private String fragmentName;
+    private final FragmentManager fragmentManager;
+    private final String fragmentName;
 
     private EditText editNewTask;
 
@@ -33,8 +33,6 @@ public class NewTaskDialog extends DialogFragment {
     private String pickedCategory;
 
     private DatabaseHandler database;
-
-    private String null_category;
 
     public NewTaskDialog (FragmentManager fragmentManager, String fragmentName){
         this.fragmentManager = fragmentManager;
@@ -45,11 +43,8 @@ public class NewTaskDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         super.onCreateDialog(savedInstanceState);
 
-        null_category = getString(R.string.null_category);
-
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("New Task");
-
         View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_newtasks, null);
         builder.setView(view);
 
@@ -62,10 +57,10 @@ public class NewTaskDialog extends DialogFragment {
         List<String> options = database.getAllCategoryNames();
         // we want null as a category, but we need an actual string to represent it,
         // so we add it here
-        options.add(0, null_category);
+        options.add(0, NullCategory.nullCategory);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.list_item, options);
         categoryPicker.setAdapter(adapter);
-        pickedCategory = null_category;
+        pickedCategory = NullCategory.nullCategory;
         categoryPicker.setText(pickedCategory, false);
         categoryPicker.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -75,7 +70,6 @@ public class NewTaskDialog extends DialogFragment {
             }
         });
 
-
         builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -84,7 +78,7 @@ public class NewTaskDialog extends DialogFragment {
                     // this means there is input
 
                     String text = editNewTask.getText().toString();
-                    if(pickedCategory.equals(null_category)) { pickedCategory = null; }
+                    if(pickedCategory.equals(NullCategory.nullCategory)) { pickedCategory = null; }
 
                     ToDoTask task = new ToDoTask();
                     task.setTask(text);
@@ -96,6 +90,7 @@ public class NewTaskDialog extends DialogFragment {
                 }
             }
         });
+
         builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -108,7 +103,7 @@ public class NewTaskDialog extends DialogFragment {
 
     @Override
     public void onDismiss(@NonNull DialogInterface dialog){
-        fragmentManager.setFragmentResult("NewTaskDialog", new Bundle());
+        fragmentManager.setFragmentResult(TAG, new Bundle());
     }
 
 }

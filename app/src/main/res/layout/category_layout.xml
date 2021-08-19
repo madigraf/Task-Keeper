@@ -33,7 +33,7 @@
             android:id="@+id/editText_category"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Enter new category"/>
+            android:hint="@string/new_category"/>
     </com.google.android.material.textfield.TextInputLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

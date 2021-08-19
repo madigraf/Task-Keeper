@@ -7,8 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,7 +15,7 @@ import com.example.taskkeeper.Adapter.CategoryAdapter;
 import com.example.taskkeeper.Model.Category;
 import com.example.taskkeeper.R;
 import com.example.taskkeeper.Utils.DatabaseHandler;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.example.taskkeeper.Utils.NullCategory;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -25,17 +23,13 @@ import java.util.List;
 import java.util.Set;
 
 public class ManageCategoriesDialog extends DialogFragment {
+    public static final String TAG = "ManageCategoriesDialog";
+
     private RecyclerView categoriesRecyclerView;
     private CategoryAdapter categoriesAdapter;
     private DatabaseHandler database;
     private List<Category> categoryList;
     private List<Category> beforeModificationsList;
-    private Button newCategoryButton;
-    private Button doneButton;
-
-    public static final String TAG = "ManageCategoriesDialog";
-
-    private String null_category;
 
 
     @Override
@@ -50,9 +44,8 @@ public class ManageCategoriesDialog extends DialogFragment {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.dialog_categories, container, false);
 
-        null_category = "Untagged";
-        newCategoryButton = view.findViewById(R.id.add_button_categories);
-        doneButton = view.findViewById(R.id.done_button_categories);
+        Button newCategoryButton = view.findViewById(R.id.add_button_categories);
+        Button doneButton = view.findViewById(R.id.done_button_categories);
         beforeModificationsList = new ArrayList<>();
         categoryList = new ArrayList<>();
 
@@ -63,7 +56,6 @@ public class ManageCategoriesDialog extends DialogFragment {
         categoriesRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         categoriesAdapter = new CategoryAdapter(database);
         categoriesRecyclerView.setAdapter(categoriesAdapter);
-
 
         removeIllegalCategories();
         beforeModificationsList = database.getALlCategories();
@@ -102,7 +94,7 @@ public class ManageCategoriesDialog extends DialogFragment {
         // first, revert or remove empty strings, or categories with the same name as the null category
         // reversion is only possible if they were not created during this session
         for (Category category: categoryList) {
-            if(category.getCategory().trim().length() == 0 || category.getCategory().equals(null_category)){
+            if(category.getCategory().trim().length() == 0 || category.getCategory().equals(NullCategory.nullCategory)){
                 // no string content, revert it or delete it from database
                 if(beforeModificationsList.contains(category)){
                     Category reversion = beforeModificationsList.get(beforeModificationsList.indexOf(category));
