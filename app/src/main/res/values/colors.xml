@@ -7,4 +7,9 @@
     <color name="orange_dark">#c78200</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="red_urgent">#F55C5C</color>
+    <color name="orange_medium">#ffb129</color>
+    <color name="green_low">#01BB40</color>
+    <color name="grey_onhold">#656565</color>
 </resources>

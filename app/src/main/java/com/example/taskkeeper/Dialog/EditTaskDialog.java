@@ -31,6 +31,9 @@ public class EditTaskDialog extends DialogFragment {
     private AutoCompleteTextView categoryPicker;
     private String pickedCategory;
 
+    private AutoCompleteTextView priorityPicker;
+    private String pickedPriority;
+
     private AutoCompleteTextView fragmentPicker;
     private String pickedFragment;
 
@@ -55,6 +58,7 @@ public class EditTaskDialog extends DialogFragment {
         View view = inflater.inflate(R.layout.dialog_edittasks, container, false);
         editTask = view.findViewById(R.id.taskname_edittasks);
         categoryPicker = view.findViewById(R.id.category_edittasks);
+        priorityPicker = view.findViewById(R.id.priority_edittasks);
         fragmentPicker = view.findViewById(R.id.tab_edittasks);
         Button cancelButton = view.findViewById(R.id.cancel_edittasks);
         Button saveButton = view.findViewById(R.id.save_edittasks);
@@ -78,6 +82,22 @@ public class EditTaskDialog extends DialogFragment {
             }
         });
 
+        List<String> priorities = new ArrayList<>();
+        priorities.add(getString(R.string.high_priority));
+        priorities.add(getString(R.string.med_priority));
+        priorities.add(getString(R.string.low_priority));
+        priorities.add(getString(R.string.null_priority));
+        ArrayAdapter<String> priorityAdapter = new ArrayAdapter<String>(getContext(), R.layout.list_item, priorities);
+        priorityPicker.setAdapter(priorityAdapter);
+        priorityPicker.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                pickedPriority = (String) parent.getItemAtPosition(position);
+
+            }
+        });
+
+
         List<String> fragments = new ArrayList<>();
         fragments.add("Today");
         fragments.add("Week");
@@ -99,6 +119,10 @@ public class EditTaskDialog extends DialogFragment {
         pickedCategory = bundle.getString("category");
         if(pickedCategory == null){ pickedCategory = NullCategory.nullCategory; }
         categoryPicker.setText(pickedCategory, false);
+
+        pickedPriority = getPriorityString(bundle.getInt("priority"));
+        priorityPicker.setText(pickedPriority, false);
+
         pickedFragment = fragmentName;
         fragmentPicker.setText(pickedFragment, false);
 
@@ -122,6 +146,7 @@ public class EditTaskDialog extends DialogFragment {
 
                     database.updateTask(bundle.getInt("id"), text);
                     database.updateTaskCategory(bundle.getInt("id"), pickedCategory);
+                    database.updatePriority(bundle.getInt("id"), getPriorityInt(pickedPriority));
                     database.updateFragment(bundle.getInt("id"), pickedFragment);
 
                     dismiss();
@@ -145,5 +170,32 @@ public class EditTaskDialog extends DialogFragment {
     public void onDismiss(@NonNull DialogInterface dialog){
         super.onDismiss(dialog);
         fragmentManager.setFragmentResult(TAG, new Bundle());
+    }
+
+    public int getPriorityInt(String priority){
+        if(priority.equals(getString(R.string.high_priority))){
+            return 3;
+        }
+        else if(priority.equals(getString(R.string.med_priority))){
+            return 2;
+        }
+        else if(priority.equals(getString(R.string.low_priority))){
+            return 1;
+        }
+        else{
+            return 0;
+        }
+    }
+
+    public String getPriorityString(int priority){
+        if(priority == 3){
+            return getString(R.string.high_priority);
+        } else if (priority == 2){
+            return getString(R.string.med_priority);
+        } else if (priority == 1){
+            return getString(R.string.low_priority);
+        } else {
+            return getString(R.string.null_priority);
+        }
     }
 }

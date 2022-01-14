@@ -1,6 +1,8 @@
 package com.example.taskkeeper.Adapter;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +12,7 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import androidx.cardview.widget.CardView;
+import androidx.core.widget.CompoundButtonCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -73,6 +76,7 @@ public class ToDoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             database.openDatabase();
             ToDoTask item = (ToDoTask) todoList.get(position);
             taskViewHolder.task.setText(item.getTask());
+            setCheckboxColor(taskViewHolder, item);
             taskViewHolder.task.setOnCheckedChangeListener(null);
             taskViewHolder.task.setChecked(toBoolean(item.getStatus()));
             taskViewHolder.task.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -103,6 +107,22 @@ public class ToDoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
+    public void setCheckboxColor(TaskViewHolder taskViewHolder, ToDoTask item){
+        int priority = item.getPriority();
+        int checkColor;
+        if(priority == 3){
+            checkColor = getContext().getResources().getColor(R.color.red_urgent);
+        } else if (priority == 2){
+            checkColor = getContext().getResources().getColor(R.color.orange_medium);
+        } else if (priority == 1){
+            checkColor = getContext().getResources().getColor(R.color.green_low);
+        } else {
+            checkColor = getContext().getResources().getColor(R.color.grey_onhold);
+        }
+
+        taskViewHolder.task.setButtonTintList(ColorStateList.valueOf(checkColor));
+    }
+
     private boolean toBoolean(int number){
         return number != 0;
     }
@@ -122,6 +142,7 @@ public class ToDoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         bundle.putInt("id", item.getId());
         bundle.putString("task", item.getTask());
         bundle.putString("category", item.getCategory());
+        bundle.putInt("priority", item.getPriority());
 
         EditTaskDialog dialog = new EditTaskDialog(fragmentManager, fragmentName);
         dialog.setArguments(bundle);

@@ -19,6 +19,7 @@ import com.example.taskkeeper.R;
 import com.example.taskkeeper.Utils.DatabaseHandler;
 import com.example.taskkeeper.Utils.NullCategory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class NewTaskDialog extends DialogFragment {
@@ -30,7 +31,9 @@ public class NewTaskDialog extends DialogFragment {
     private EditText editNewTask;
 
     private AutoCompleteTextView categoryPicker;
+    private AutoCompleteTextView priorityPicker;
     private String pickedCategory;
+    private String pickedPriority;
 
     private DatabaseHandler database;
 
@@ -49,17 +52,19 @@ public class NewTaskDialog extends DialogFragment {
         builder.setView(view);
 
         editNewTask = view.findViewById(R.id.edittext_newtask);
-        categoryPicker = view.findViewById(R.id.autocomplete_newtask);
+        categoryPicker = view.findViewById(R.id.autocomplete_newtask_category);
+        priorityPicker = view.findViewById(R.id.autocomplete_newtask_priority);
+
 
         database = new DatabaseHandler(getActivity());
         database.openDatabase();
 
-        List<String> options = database.getAllCategoryNames();
+        List<String> categoryOptions = database.getAllCategoryNames();
         // we want null as a category, but we need an actual string to represent it,
         // so we add it here
-        options.add(0, NullCategory.nullCategory);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.list_item, options);
-        categoryPicker.setAdapter(adapter);
+        categoryOptions.add(0, NullCategory.nullCategory);
+        ArrayAdapter<String> categoryAdapter = new ArrayAdapter<String>(getContext(), R.layout.list_item, categoryOptions);
+        categoryPicker.setAdapter(categoryAdapter);
         pickedCategory = NullCategory.nullCategory;
         categoryPicker.setText(pickedCategory, false);
         categoryPicker.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -70,11 +75,28 @@ public class NewTaskDialog extends DialogFragment {
             }
         });
 
+        List<String> priorityOptions = new ArrayList<>();
+        priorityOptions.add(getString(R.string.high_priority));
+        priorityOptions.add(getString(R.string.med_priority));
+        priorityOptions.add(getString(R.string.low_priority));
+        priorityOptions.add(getString(R.string.null_priority));
+        ArrayAdapter<String> priorityAdapter = new ArrayAdapter<String>(getContext(), R.layout.list_item, priorityOptions);
+        priorityPicker.setAdapter(priorityAdapter);
+        pickedPriority = null;
+        priorityPicker.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                pickedPriority = (String) parent.getItemAtPosition(position);
+
+            }
+        });
+
+
         builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String input = editNewTask.getText().toString();
-                if(!input.equals("")){
+                if(!input.equals("") && pickedPriority != null){
                     // this means there is input
 
                     String text = editNewTask.getText().toString();
@@ -84,6 +106,7 @@ public class NewTaskDialog extends DialogFragment {
                     task.setTask(text);
                     task.setStatus(0);
                     task.setCategory(pickedCategory);
+                    task.setPriority(getPriorityInt(pickedPriority));
                     database.insertTask(task, fragmentName);
 
                     dismiss();
@@ -105,6 +128,21 @@ public class NewTaskDialog extends DialogFragment {
     public void onDismiss(@NonNull DialogInterface dialog){
         super.onDismiss(dialog);
         fragmentManager.setFragmentResult(TAG, new Bundle());
+    }
+
+    public int getPriorityInt(String priority){
+        if(priority.equals(getString(R.string.high_priority))){
+            return 3;
+        }
+        else if(priority.equals(getString(R.string.med_priority))){
+            return 2;
+        }
+        else if(priority.equals(getString(R.string.low_priority))){
+            return 1;
+        }
+        else{
+            return 0;
+        }
     }
 
 }

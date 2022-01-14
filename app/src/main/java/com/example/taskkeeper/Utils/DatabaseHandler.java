@@ -16,7 +16,7 @@ import java.util.List;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
 
-    private static final int VERSION = 1;
+    private static final int VERSION = 2;
     private static final String NAME = "taskKeeperDatabase";
     private static final String MAINTASKS_TABLE = "maintasks";
     private static final String ID = "id";
@@ -25,8 +25,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String CATEGORY = "category";
     private static final String CATEGORY_TABLE = "category";
     private static final String FRAGMENT = "fragment";
+    private static final String PRIORITY = "priority";
     private static final String CREATE_TODO_TABLE = "CREATE TABLE " + MAINTASKS_TABLE + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + TASK + " TEXT, "
-            + STATUS + " INTEGER, " + CATEGORY + " TEXT, " + FRAGMENT + " TEXT);";
+            + STATUS + " INTEGER, " + CATEGORY + " TEXT, " + FRAGMENT + " TEXT, " + PRIORITY + " INTEGER);";
 
     private static final String CREATE_CATEGORY_TABLE = "CREATE TABLE " + CATEGORY_TABLE + "("  + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + CATEGORY + " TEXT);";
 
@@ -61,6 +62,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         cv.put(STATUS, 0);
         cv.put(CATEGORY, task.getCategory());
         cv.put(FRAGMENT, fragmentName);
+        cv.put(PRIORITY, task.getPriority());
         database.insert(MAINTASKS_TABLE, null, cv);
     }
 
@@ -69,7 +71,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     public List<ToDoItem> getFragmentTasksWithHeaders(String fragmentName){
-        List<ToDoItem> databaseList = getFragmentTasksHelper(CATEGORY, fragmentName);
+        String orderBy = CATEGORY + ", " + PRIORITY + " DESC";
+        List<ToDoItem> databaseList = getFragmentTasksHelper(orderBy, fragmentName);
         if(databaseList.size() == 0){
             return databaseList;
         }
@@ -93,19 +96,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return taskList;
     }
 
-    private boolean shouldAddHeader(String currentCategory, String taskCategory){
-        if(currentCategory.equals("")){
-
-        }
-
-        if(currentCategory.equals(NullCategory.nullCategory)){
-
-        }
-
-
-        return true;
-    }
-
     private List<ToDoItem> getFragmentTasksHelper(String orderBy, String fragmentName){
         List<ToDoItem> taskList = new ArrayList<>();
         Cursor cur = null;
@@ -120,6 +110,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                         task.setTask(cur.getString(cur.getColumnIndex(TASK)));
                         task.setStatus(cur.getInt(cur.getColumnIndex(STATUS)));
                         task.setCategory(cur.getString(cur.getColumnIndex(CATEGORY)));
+                        task.setPriority(cur.getInt(cur.getColumnIndex(PRIORITY)));
                         taskList.add(task);
                     } while (cur.moveToNext());
                 }
@@ -181,6 +172,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         ContentValues cv = new ContentValues();
         cv.put(FRAGMENT, fragment);
         database.update(MAINTASKS_TABLE, cv, ID + "= ?", new String[] {String.valueOf(id)});
+    }
+
+    public void updatePriority(int id, int priority){
+        ContentValues cv = new ContentValues();
+        cv.put(PRIORITY, priority);
+        database.update(MAINTASKS_TABLE, cv, ID + "=?", new String[]{String.valueOf(id)});
     }
 
     public void deleteTask(int id){

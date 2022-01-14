@@ -1,10 +1,13 @@
 package com.example.taskkeeper.Model;
 
+import com.example.taskkeeper.R;
+
 public class ToDoTask extends ToDoItem{
     private int id;
     private int status;
     private String task;
     private String category;
+    private int priority;
 
     @Override
     public int getType() {
@@ -41,5 +44,13 @@ public class ToDoTask extends ToDoItem{
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public int getPriority() {
+        return priority;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
     }
 }
