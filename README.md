@@ -2,7 +2,12 @@
 
 An android app that provides a place for keeping track of tasks, with a simple organization system that keeps things clear and relevant.
 
-Download the Version 1.0 APK from the [Releases](https://github.com/madigraf/Task-Keeper/releases).
+Download the Version 1.1 APK from the [Releases](https://github.com/madigraf/Task-Keeper/releases).
+
+## Version 1.1 App Preview
+
+### The latest version introduces task priority to help you focus on your most pressing tasks.
+![Image showing that each task's checkbox is now a colour that corresponds to its priority](https://i.imgur.com/BF27RwM.png)
 
 ## Version 1.0 App Preview
 
