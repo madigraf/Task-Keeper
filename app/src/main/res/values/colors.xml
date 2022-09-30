@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="blue_main">#2979ff</color>
-    <color name="blue_dark">#004ecb</color>
-    <color name="blue_light">#75a7ff</color>
-    <color name="orange_main">#ffb129</color>
-    <color name="orange_dark">#c78200</color>
+    <color name="primary_main">#218380</color>
+    <color name="primary_dark">#005654</color>
+    <color name="primary_light">#59b3af</color>
+    <color name="secondary_main">#ffb129</color>
+    <color name="secondary_dark">#c78200</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
