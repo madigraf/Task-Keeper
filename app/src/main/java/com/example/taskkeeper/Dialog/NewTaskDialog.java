@@ -82,7 +82,8 @@ public class NewTaskDialog extends DialogFragment {
         priorityOptions.add(getString(R.string.null_priority));
         ArrayAdapter<String> priorityAdapter = new ArrayAdapter<String>(getContext(), R.layout.list_item, priorityOptions);
         priorityPicker.setAdapter(priorityAdapter);
-        pickedPriority = null;
+        pickedPriority = "Low";
+        priorityPicker.setText(pickedPriority, false);
         priorityPicker.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
